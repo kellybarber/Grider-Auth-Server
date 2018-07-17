@@ -2,10 +2,10 @@ const app = require('express')()
 const http = require('http')
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
-const mogoose = require('mongoose')
+const mongoose = require('mongoose')
 const router = require('./router')
 
-mongoose.connect('mongodb://localhost:auth/auth')
+mongoose.connect('mongodb://localhost/auth')
 
 app.use(morgan('combined'))
 app.use(bodyParser.json({ type: '*/*' }))
