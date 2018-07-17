@@ -1,5 +1,5 @@
 const passport = require('passport')
-const { Strategy, ExtractJwt } = require('passport-jwt')
+const { Strategy: JwtStrategy, ExtractJwt } = require('passport-jwt')
 const LocalStrategy = require('passport-local')
 const User = require('../models/user')
 const config = require('../config')
@@ -10,10 +10,10 @@ const jwtOptions = {
 }
 
 const localOptions = {
-  usernameField: email
+  usernameField: 'email'
 }
 
-const jwtLogin = new Strategy(jwtOptions, (payload, done) => {
+const jwtLogin = new JwtStrategy(jwtOptions, (payload, done) => {
   User.findById(payload.sub, (err, user) => {
     if (err) return done(err, false)
     
@@ -30,8 +30,13 @@ const localLogin = new LocalStrategy(localOptions, (email, password, done) => {
     if (err) return done(err)
     if (!user) return done(null, false)
 
-    
+    user.comparePassword(password, (err, isMatch) => {
+      if (err) return done(err)
+      if (!isMatch) return done(null, false) 
+
+      return done(null, user)
+    })
   })
 })
 
-passport.use(jwtLogin)
+passport.use(jwtLogin, localLogin)
