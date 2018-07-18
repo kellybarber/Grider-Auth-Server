@@ -39,4 +39,5 @@ const localLogin = new LocalStrategy(localOptions, (email, password, done) => {
   })
 })
 
-passport.use(jwtLogin, localLogin)
+passport.use(jwtLogin)
+passport.use(localLogin)
